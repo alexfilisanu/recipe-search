@@ -23,8 +23,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-    container_name: backend
+      context: app
+    container_name: app
     ports:
       - "5050:5050"
     depends_on:

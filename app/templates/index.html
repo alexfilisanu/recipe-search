@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recipe Search</title>
+  <link rel="stylesheet" href="../static/styles.css">
+  <script src="../static/main.js" defer></script>
+</head>
+<body>
+  <h1>Recipe Search</h1>
+
+  <div id="search-bar">
+    <label for="search-input"></label><input type="text" id="search-input" placeholder="Enter title or ingredient..."/>
+    <button onclick="searchRecipes()">Search</button>
+  </div>
+
+  <div id="filters">
+    <label><input type="checkbox" id="vegetarian"> Vegetarian</label>
+    <label><input type="checkbox" id="vegan"> Vegan</label>
+    <label><input type="checkbox" id="keto"> Keto</label>
+    <label><input type="checkbox" id="dairy_free"> Dairy Free</label>
+    <label><input type="checkbox" id="gluten_free"> Gluten Free</label>
+    <label><input type="checkbox" id="egg_free"> Egg Free</label>
+    <label><input type="checkbox" id="nut_free"> Nut Free</label>
+  </div>
+
+  <ul id="results"></ul>
+</body>
+</html>
