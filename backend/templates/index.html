@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recipe Search</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input { padding: 8px; width: 300px; }
+    button { padding: 8px 12px; }
+    ul { margin-top: 20px; }
+    li { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Recipe Search</h1>
+  <input type="text" id="search-input" placeholder="Enter recipe title..." />
+  <button onclick="searchRecipes()">Search</button>
+
+  <ul id="results"></ul>
+
+  <script>
+    async function searchRecipes() {
+      const input = document.getElementById("search-input").value;
+      const response = await fetch(`/recipes?title=${encodeURIComponent(input)}`);
+      const recipes = await response.json();
+
+      const results = document.getElementById("results");
+      results.innerHTML = "";
+
+      if (recipes.length === 0) {
+        results.innerHTML = "<li>No recipes found.</li>";
+        return;
+      }
+
+      recipes.forEach(r => {
+        const li = document.createElement("li");
+        li.textContent = r.title;
+        results.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
