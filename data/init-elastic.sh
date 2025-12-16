@@ -22,6 +22,11 @@ curl -s -X PUT "http://elasticsearch:9200/recipes" \
         "title": { "type": "text" },
         "vegetarian": { "type": "boolean" },
         "vegan": { "type": "boolean" },
+        "keto": { "type": "boolean" },
+        "dairy_free": { "type": "boolean" },
+        "gluten_free": { "type": "boolean" },
+        "egg_free": { "type": "boolean" },
+        "nut_free": { "type": "boolean" },
         "ingredients": {
           "type": "nested",
           "properties": {
