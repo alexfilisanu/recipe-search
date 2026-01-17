@@ -4,7 +4,6 @@ ES_ENDPOINT = 'http://localhost:5050/recipes'
 
 TARGETS = {
     "Brown sugar & cinnamon glazed popcorn": [
-        {"q": "cinnamon popcorn", "filters": {}},
         {"q": "cinnamon", "filters": {}},
         {"q": "cinnamon", "filters": {"gluten_free": "true"}},
         {"q": "sugar butter kernel", "filters": {}}
@@ -27,7 +26,7 @@ TARGETS = {
     "Chinese chicken curry": [
         {"q": "chicken curry", "filters": {}},
         {"q": "chinese curry", "filters": {}},
-        {"q": "spicy chicken", "filters": {}}
+        {"q": "chicken spicy", "filters": {}}
     ]
 }
 

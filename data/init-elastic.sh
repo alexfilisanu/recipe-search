@@ -16,10 +16,32 @@ echo "Old index deleted (if existed)."
 curl -s -X PUT "http://elasticsearch:9200/recipes" \
   -H "Content-Type: application/json" \
   -d '{
-    "settings": { "number_of_shards": 1 },
+    "settings": {
+      "number_of_shards": 1,
+      "analysis": {
+        "filter": {
+          "my_synonym_filter": {
+            "type": "synonym_graph",
+            "synonyms_path": "synonyms.txt"
+          }
+        },
+        "analyzer": {
+          "my_search_analyzer": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "my_synonym_filter"
+            ]
+          }
+        }
+      }
+    },
     "mappings": {
       "properties": {
-        "title": { "type": "text" },
+        "title": {
+          "type": "text",
+          "search_analyzer": "my_search_analyzer"
+        },
         "vegetarian": { "type": "boolean" },
         "vegan": { "type": "boolean" },
         "keto": { "type": "boolean" },
@@ -32,7 +54,10 @@ curl -s -X PUT "http://elasticsearch:9200/recipes" \
           "properties": {
             "quantity": { "type": "keyword" },
             "unit": { "type": "keyword" },
-            "ingredient": { "type": "text" },
+            "ingredient": {
+              "type": "text",
+              "search_analyzer": "my_search_analyzer"
+            },
             "note": { "type": "text" }
           }
         }

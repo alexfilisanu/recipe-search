@@ -14,103 +14,86 @@ def index():
 
 @app.route("/recipes", methods=["GET"])
 def get_recipes():
-    query = request.args.get("q")
+    query = request.args.get("q", "").strip()
     filters = []
+    dietary_fields = ["vegetarian", "vegan", "keto", "dairy_free", "gluten_free", "egg_free", "nut_free"]
 
-    # dietary filters (checkboxes in frontend)
-    for field in ["vegetarian", "vegan", "keto", "dairy_free", "gluten_free", "egg_free", "nut_free"]:
-        value = request.args.get(field)
-        if value == "true":
+    for field in dietary_fields:
+        if request.args.get(field) == "true":
             filters.append({"term": {field: True}})
 
-    must_queries = []
-
     if query:
-        terms = query.split()
-
-        must_queries.append({
+        search_query = {
             "bool": {
-                "should": [
-                    # highest priority: TITLE matches ALL words (x5)
-                    {
-                        "bool": {
-                            "must": [
-                                {
-                                    "match": {
-                                        "title": {
-                                            "query": term,
-                                            "fuzziness": "AUTO"
-                                        }
-                                    }
-                                } for term in terms
-                            ],
-                            "boost": 5
-                        }
-                    },
-                    # 2nd priority: TITLE matches ANY word (x2)
+                "filter": filters,
+                "must": [
                     {
                         "bool": {
                             "should": [
+                                # 1. EXACT PHRASE MATCH (x10 boost)
+                                {
+                                    "match_phrase": {
+                                        "title": {
+                                            "query": query,
+                                            "boost": 10
+                                        }
+                                    }
+                                },
+                                # 2. FULL TITLE MATCH (x5 boost)
                                 {
                                     "match": {
                                         "title": {
-                                            "query": term,
+                                            "query": query,
+                                            "boost": 5,
+                                            "fuzziness": "AUTO",
+                                            "operator": "and"
+                                        }
+                                    }
+                                },
+                                # 3. PARTIAL TITLE MATCH (x2 boost)
+                                {
+                                    "match": {
+                                        "title": {
+                                            "query": query,
+                                            "boost": 2,
                                             "fuzziness": "AUTO"
                                         }
                                     }
-                                } for term in terms
+                                },
+                                # 4. INGREDIENTS MATCH (x1 boost - sum scores of all ingredients)
+                                {
+                                    "nested": {
+                                        "path": "ingredients",
+                                        "query": {
+                                            "match": {
+                                                "ingredients.ingredient": {
+                                                    "query": query,
+                                                    "boost": 1,
+                                                    "fuzziness": "AUTO"
+                                                }
+                                            }
+                                        },
+                                        "score_mode": "sum"
+                                    }
+                                }
                             ],
-                            "boost": 2
-                        }
-                    },
-                    # 3rd priority: INGREDIENTS matches ALL words (x3)
-                    {
-                        "nested": {
-                            "path": "ingredients",
-                            "query": {
-                                "bool": {
-                                    "must": [
-                                        {
-                                            "match": {
-                                                "ingredients.ingredient": {
-                                                    "query": term,
-                                                    "fuzziness": "AUTO"
-                                                }
-                                            }
-                                        } for term in terms
-                                    ]
-                                }
-                            },
-                            "boost": 3
-                        }
-                    },
-                    # 4th priority: INGREDIENTS matches ANY word (x1)
-                    {
-                        "nested": {
-                            "path": "ingredients",
-                            "query": {
-                                "bool": {
-                                    "should": [
-                                        {
-                                            "match": {
-                                                "ingredients.ingredient": {
-                                                    "query": term,
-                                                    "fuzziness": "AUTO"
-                                                }
-                                            }
-                                        } for term in terms
-                                    ]
-                                }
-                            }
+                            "minimum_should_match": 1
                         }
                     }
                 ]
             }
-        })
+        }
+    else:
+        search_query = {
+            "bool": {
+                "filter": filters,
+                "must": {"match_all": {}}
+            }
+        }
 
     res = es.search(
         index=INDEX,
-        query={"bool": {"must": must_queries + filters}} if must_queries or filters else {"match_all": {}},
+        query=search_query,
         highlight={"fields": {"title": {}, "ingredients.ingredient": {}}},
         size=10
     )
@@ -121,7 +104,6 @@ def get_recipes():
         data["_highlight"] = hit.get("highlight", {})
         recipes.append(data)
 
-    print(jsonify(recipes))
     return jsonify(recipes)
 
 

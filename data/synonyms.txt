@@ -1,0 +1,22 @@
+zucchini, courgette
+eggplant, aubergine
+cilantro, coriander
+scallion, spring onion
+baking soda, bicarbonate of soda
+ground meat, mince
+arugula, rocket
+cookie, biscuit
+jello, jelly
+
+vegetable => vegetable, spinach, carrot, onion, potato, sweet potato, pepper, broccoli, cauliflower, kale, leek, mushroom, tomato, pumpkin, butternut squash
+fruit => fruit, apple, banana, pear, orange, lemon, lime, berry, strawberry, raspberry, blueberry, mango, pineapple, peach
+seafood => seafood, fish, prawn, shrimp, salmon, cod, haddock, tuna, crab, mussels
+fish => fish, salmon, cod, haddock, tuna, sea bass, trout
+pasta => pasta, spaghetti, penne, fusilli, macaroni, lasagne, tagliatelle, linguine, noodles
+meat => meat, beef, lamb, pork, chicken, turkey, duck, ham, bacon, sausage, steak, mince
+poultry => poultry, chicken, turkey, duck
+
+spicy, hot => spicy, hot, chilli, chili, curry, cayenne, paprika, harissa, sriracha, jalapeño, madras, masala, ginger
+sweet => sweet, sugar, honey, maple syrup, chocolate, cocoa, caramel, vanilla, dates
+christmas, festive => cranberry, cinnamon, nutmeg, cloves, pudding
+healthy => salad, soup, vegan, vegetarian, low fat, smoothie
